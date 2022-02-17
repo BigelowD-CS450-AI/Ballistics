@@ -10,13 +10,11 @@ public class Target : MonoBehaviour
     private Vector3 initialPosition;
     private Rigidbody rb;
     public GameManager gm;
-    //private Vector3 initialRotation;
 
     public void Start()
     {
         initialPosition = transform.position;
         rb = gameObject.GetComponent<Rigidbody>();
-        //initialRotation = transform.rotation.eulerAngles;
     }
 
     public void Update()
@@ -31,7 +29,7 @@ public class Target : MonoBehaviour
     public void Reset()
     {
         transform.position = initialPosition;
-        transform.rotation = Quaternion.identity;//Quaternion.Euler(initialRotation);
+        transform.rotation = Quaternion.identity;
         rb.velocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
     }

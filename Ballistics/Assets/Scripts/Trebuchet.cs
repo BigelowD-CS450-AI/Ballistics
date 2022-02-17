@@ -25,7 +25,6 @@ public class Trebuchet : MonoBehaviour
             offset = transform.position - projectile.transform.position;
             angle = 180 * Mathf.Atan2(offset.y, offset.x) / Mathf.PI;
             transform.rotation = Quaternion.Euler(0.0f, 0.0f, Mathf.Min(angle + angleOffset, maxAngle));
-            Debug.Log("angle: " + transform.rotation.eulerAngles.z + " maxAngle: " + maxAngle);
             if (transform.rotation.eulerAngles.z <= maxAngle)
                 launched = true;
         }

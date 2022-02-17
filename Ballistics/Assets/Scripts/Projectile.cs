@@ -5,16 +5,16 @@ using UnityEngine.UI;
 
 public class Projectile : MonoBehaviour
 {
-    [SerializeField] private Vector3 launchDirection;
-    [SerializeField] private float launchSpeed;
+    [SerializeField] public Vector3 launchDirection;
+    [SerializeField] public float launchSpeed;
     [SerializeField] private GameObject target;
     [SerializeField] private Slider launchForceSlider;
     private Vector3 targetOffset;
     private Vector3 initialPosition;
     //private bool hasLaunched = false;
-    private Rigidbody rb;
+    public Rigidbody rb;
     private Vector3 delta;
-    private float ttt;
+    public float ttt;
     public GameManager gm;
     private Vector2 times;
 
@@ -38,29 +38,31 @@ public class Projectile : MonoBehaviour
     void Update()
     {
         launchSpeed = launchForceSlider.value;
-        if (!gm.Launched)
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                if (CalcTimesToTarget() == 0)
-                {
-                    //targetPos = target.transform.position + Vector3.down;
-                    Debug.Log("TTT " + times);
-                    SetLaunchDirection();
-                    rb.useGravity = true;
-                    rb.velocity = launchDirection * launchSpeed;
-                    gm.Launch();
-                }
-            }
-      }
+    }
 
-    private void SetLaunchDirection()
+    public void Launch()
+    {
+        if (!gm.Launched)
+        {
+            if (CalcTimesToTarget() >= 0)
+            {
+                SetLaunchDirection();
+                rb.useGravity = true;
+                rb.velocity = launchDirection * launchSpeed;
+                gm.Launch();
+            }
+        }
+    }
+
+    public Vector3 SetLaunchDirection()
     { 
         delta = (target.transform.position + targetOffset) - transform.position;
         launchDirection = (2 * delta - Physics.gravity * Squared(ttt)) / (2 * launchSpeed * ttt);
         launchDirection.Normalize();
+        return launchDirection;
     }
 
-    private int CalcTimesToTarget()
+    public float CalcTimesToTarget()
     {
         delta = transform.position - (target.transform.position + targetOffset);
         float a = Squared(Physics.gravity.magnitude);
@@ -86,7 +88,7 @@ public class Projectile : MonoBehaviour
         }
 
         ttt = Mathf.Max(times.x, times.y);
-        return 0;
+        return ttt;
     }
 
     private float Squared(float x)
