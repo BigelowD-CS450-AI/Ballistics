@@ -9,6 +9,7 @@ public class Projectile : MonoBehaviour
     [SerializeField] private float launchSpeed;
     [SerializeField] private GameObject target;
     [SerializeField] private Slider launchForceSlider;
+    private Vector3 targetOffset;
     private Vector3 initialPosition;
     //private bool hasLaunched = false;
     private Rigidbody rb;
@@ -19,10 +20,10 @@ public class Projectile : MonoBehaviour
 
     public void Start()
     {
+        targetOffset = -Vector3.down - Vector3.right * .5f;
         initialPosition = transform.position;
         rb = gameObject.GetComponent<Rigidbody>();
         rb.useGravity = false;
-        delta = target.transform.position - transform.position/* - target.transform.position*/;
     }
 
     public void Reset()
@@ -42,6 +43,7 @@ public class Projectile : MonoBehaviour
             {
                 if (CalcTimesToTarget() == 0)
                 {
+                    //targetPos = target.transform.position + Vector3.down;
                     Debug.Log("TTT " + times);
                     SetLaunchDirection();
                     rb.useGravity = true;
@@ -49,22 +51,18 @@ public class Projectile : MonoBehaviour
                     gm.Launch();
                 }
             }
-    }
+      }
 
     private void SetLaunchDirection()
     { 
-        delta = target.transform.position - transform.position;
+        delta = (target.transform.position + targetOffset) - transform.position;
         launchDirection = (2 * delta - Physics.gravity * Squared(ttt)) / (2 * launchSpeed * ttt);
         launchDirection.Normalize();
     }
 
     private int CalcTimesToTarget()
     {
-        /*float gravity_delta_dot = Vector3.Dot(Physics.gravity, delta);
-        float gravity_squared_abs = Squared(Physics.gravity.x) + Squared(Physics.gravity.y) + Squared(Physics.gravity.z);
-        float delta_squared_abs = Squared(delta.x) + Squared(delta.y) + Squared(delta.z);
-        float speed_squared = Squared(launchSpeed);*/
-        delta = transform.position - target.transform.position;
+        delta = transform.position - (target.transform.position + targetOffset);
         float a = Squared(Physics.gravity.magnitude);
         float b = -4 * (Vector3.Dot(Physics.gravity, delta) + Squared(launchSpeed));
         float c = 4 * Squared(delta.magnitude);
@@ -89,27 +87,6 @@ public class Projectile : MonoBehaviour
 
         ttt = Mathf.Max(times.x, times.y);
         return 0;
-        //coming up with not possible
-        //
-        /*
-        if (Squared(gravity_delta_dot + speed_squared) < gravity_squared_abs*delta_squared_abs)
-        {
-            Debug.Log("Not Possible");
-            return;
-        }*/
-        /*times = new Vector2(
-            2 * 
-            Mathf.Sqrt(
-                (gravity_delta_dot + speed_squared + Mathf.Sqrt(    Squared(gravity_delta_dot + speed_squared) - gravity_squared_abs * delta_squared_abs)   ) 
-                                                                        / (2 * gravity_squared_abs)
-            ),
-
-            2 * 
-            Mathf.Sqrt(
-                (gravity_delta_dot + speed_squared - Mathf.Sqrt(    Squared(gravity_delta_dot + speed_squared) - gravity_squared_abs * delta_squared_abs)   ) 
-                                                                        / (2 * gravity_squared_abs) 
-            )
-        );*/
     }
 
     private float Squared(float x)

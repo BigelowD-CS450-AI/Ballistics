@@ -7,8 +7,9 @@ public class Trebuchet : MonoBehaviour
     public GameObject projectile;
     private Vector2 offset;
     private float angle;
-    [SerializeField] private float maxAngle = -75.0f;
+    [SerializeField] private float maxAngle = 285f;
     [SerializeField] private float angleOffset = 5.0f;
+    private bool launched = false;
 
     public void Start()
     {
@@ -19,9 +20,19 @@ public class Trebuchet : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        offset = transform.position - projectile.transform.position;
-        angle = 180 * Mathf.Atan2(offset.y, offset.x) / Mathf.PI;
-        transform.rotation = Quaternion.Euler(0.0f, 0.0f, Mathf.Max(angle + angleOffset,maxAngle));
-            //SetLookRotation(projectile.transform.position, Vector3.up);
+        if (!launched)
+        {
+            offset = transform.position - projectile.transform.position;
+            angle = 180 * Mathf.Atan2(offset.y, offset.x) / Mathf.PI;
+            transform.rotation = Quaternion.Euler(0.0f, 0.0f, Mathf.Min(angle + angleOffset, maxAngle));
+            Debug.Log("angle: " + transform.rotation.eulerAngles.z + " maxAngle: " + maxAngle);
+            if (transform.rotation.eulerAngles.z <= maxAngle)
+                launched = true;
+        }
+    }
+
+    public void Reset()
+    {
+        launched = false;
     }
 }

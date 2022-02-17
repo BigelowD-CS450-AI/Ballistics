@@ -25,6 +25,7 @@ public class Target : MonoBehaviour
         {
             distanceOffsetVector = new Vector3(distanceOffset.value, 1.0f, 0.87f);
             transform.position = distanceOffsetVector;
+            rb.angularVelocity = Vector3.zero;
         }
     }
     public void Reset()
