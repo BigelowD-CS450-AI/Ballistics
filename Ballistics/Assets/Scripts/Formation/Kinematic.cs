@@ -2,32 +2,53 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Kinematic : MonoBehaviour
+public class Kinematic : IKinematic
 {
-    private Rigidbody rb;
-    private const float maxAngularVelocity = Mathf.Deg2Rad * 180.0f;
-    private const float maxSpeed = 5.0f;
-    LookWhereGoing rotationType;
-    SinStraight moveType;
+    private SteeringBehaviour rotationController;
+    private SteeringBehaviour movementController;
+
+    [SerializeField] protected MoveType moveType;
+
     // Start is called before the first frame update
-    private void Start()
+    public override void Start()
     {
         rb = gameObject.GetComponent<Rigidbody>();
         rb.maxAngularVelocity= maxAngularVelocity;
-        rotationType = new LookWhereGoing(this);
-        moveType = new SinStraight(this);
+        switch (moveType)
+        {
+            case (MoveType.sinStraight):
+                movementController = new SinStraight(this);
+                break;
+            case (MoveType.follow):
+                movementController = new Follow(this, target);
+                break;
+            case (MoveType.seperate):
+                movementController = new Seperate(this, target);
+                break;
+        }
+        rotationController = new LookWhereGoing(this);
     }
 
-    public Vector3 GetVelocity()
+    public override Vector3 GetVelocityDirection()
     {
-        return rb.velocity.normalized;
+        return direction;
     }
 
     // Update is called once per frame
-    void FixedUpdate()
+    public override void FixedUpdate()
     {
-       // rb.angularVelocity = new Vector3(0.0f, rotationType.GetSteering().angularVelocity, 0.0f);
-        transform.rotation = Quaternion.Euler(0.0f, rotationType.GetSteering().angularVelocity, 0.0f);
-        rb.velocity = moveType.GetSteering().velocity * maxSpeed;
+        //Debug.Log("IEXSIST");
+        // rb.angularVelocity = new Vector3(0.0f, rotationType.GetSteering().angularVelocity, 0.0f);
+        Debug.Log(rb);
+        rb.velocity = movementController.GetSteering().velocity * maxSpeed;
+        Debug.Log("vel : " + rb.velocity);
+        if (rb.velocity != Vector3.zero)
+            direction = rb.velocity.normalized;
+        transform.rotation = Quaternion.Euler(0.0f, rotationController.GetSteering().angularVelocity, 0.0f);
     }
+}
+
+public enum MoveType
+{
+    sinStraight, follow, seperate
 }

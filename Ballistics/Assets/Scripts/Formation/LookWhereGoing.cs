@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class LookWhereGoing : SteeringBehaviour
 {
-    private Kinematic character;
+    private IKinematic character;
 
-    public LookWhereGoing(Kinematic character)
+    public LookWhereGoing(IKinematic character)
     {
         this.character = character;
     }
@@ -14,7 +14,10 @@ public class LookWhereGoing : SteeringBehaviour
     public override SteeringOutput GetSteering()
     {
         SteeringOutput so = new SteeringOutput();
-        so.angularVelocity = Mathf.Atan2(character.GetVelocity().x, character.GetVelocity().z);
+        so.angularVelocity = Mathf.Atan2(character.GetVelocityDirection().x, character.GetVelocityDirection().z) * Mathf.Rad2Deg;
+        /*Debug.Log("Ang Vel" + so.angularVelocity);
+        Debug.Log("x vel" + character.GetVelocity().x);
+        Debug.Log("z vel" + character.GetVelocity().z);*/
         return so;
 
     }

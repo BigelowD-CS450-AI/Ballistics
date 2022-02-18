@@ -2,21 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SinStraight : SteeringBehaviour
+public class Follow : SteeringBehaviour
 {
     private IKinematic character;
-    
+    private IKinematic target;
 
-    public SinStraight(IKinematic character)
+    public Follow(IKinematic character, IKinematic target)
     {
         this.character = character;
+        this.target = target;
     }
 
     public override SteeringOutput GetSteering()
     {
         SteeringOutput so = new SteeringOutput();
-        so.velocity = new Vector3(1.0f, 0.0f, Mathf.Sin(character.transform.position.x)).normalized;
-        Debug.Log("SteeringOutput: " + so.velocity);
+        so.velocity = (target.transform.position - character.transform.position).normalized;
         return so;
 
     }
